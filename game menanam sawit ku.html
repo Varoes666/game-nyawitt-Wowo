@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Game Menanam Sawit</title>
+
+<style>
+
+body{
+  text-align:center;
+  font-family:Arial;
+  background-image:url("1000735017.png");
+  background-size:cover;
+  background-position:center;
+}
+
+/* start screen */
+#startScreen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  z-index:1000;
+}
+
+#playBtn{
+  margin-top:20px;
+  padding:15px 40px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  background:#4CAF50;
+  color:white;
+  cursor:pointer;
+}
+
+/* uang */
+#scorebox{
+  font-size:20px;
+  color:white;
+  background:rgba(0,0,0,0.5);
+  display:inline-block;
+  padding:8px 20px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+/* tombol kirim */
+#kirimBtn{
+  display:none;
+  margin-top:10px;
+  padding:10px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  background:#FF9800;
+  color:white;
+  cursor:pointer;
+}
+
+/* ladang */
+#ladang{
+  margin:auto;
+  width:90vw;
+  height:70vh;
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  grid-template-rows:repeat(8,1fr);
+}
+
+/* petak */
+.petak{
+  background-image:url("tanah.png");
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+}
+
+/* tanaman */
+.tanaman{
+  width:60%;
+  transform:scale(0.3);
+  opacity:0;
+  transition:transform 2s, opacity 2s;
+}
+
+.tumbuh{
+  transform:scale(1);
+  opacity:1;
+}
+
+/* siap panen */
+.siap{
+  animation:panen 1s infinite alternate;
+}
+
+@keyframes panen{
+  from{ transform:scale(1); }
+  to{ transform:scale(1.1); }
+}
+
+/* event fullscreen */
+#eventImage{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+#eventImage img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="startScreen">
+<h1>🌴 Game Menanam Sawit</h1>
+<p>Mari kita mulai bermain</p>
+<button id="playBtn">▶ PLAY</button>
+</div>
+
+<!-- event layar penuh -->
+<div id="eventImage">
+<img src="wowo.png">
+</div>
+
+<h1>🌴 Game Menanam Sawit</h1>
+
+<div id="scorebox">
+💰 <span id="skor">0</span>
+</div>
+
+<button id="kirimBtn">📤 Kirim ke Pak Wowo</button>
+
+<div id="ladang"></div>
+
+<script>
+
+let uang = 0
+let ladang = document.getElementById("ladang")
+let jumlahPetak = 64
+let kirimBtn = document.getElementById("kirimBtn")
+
+function updateUang(){
+  document.getElementById("skor").innerText = uang
+  // tampilkan tombol kirim jika uang >= 10
+  if(uang >= 10){
+    kirimBtn.style.display = "inline-block"
+  } else {
+    kirimBtn.style.display = "none"
+  }
+}
+
+/* membuat ladang */
+for(let i=0;i<jumlahPetak;i++){
+
+  let petak=document.createElement("div")
+  petak.className="petak"
+  petak.dataset.state="kosong"
+
+  petak.onclick=function(){
+
+    if(this.dataset.state=="kosong"){
+
+      this.dataset.state="tumbuh"
+
+      let img=document.createElement("img")
+      img.src="bibit.png"
+      img.className="tanaman"
+
+      this.appendChild(img)
+
+      setTimeout(()=>{
+        img.classList.add("tumbuh")
+      },50)
+
+      setTimeout(()=>{
+
+        img.src="sawit panen.png"
+        img.classList.add("siap")
+        this.dataset.state="siap"
+
+      },4000)
+
+    }
+
+    else if(this.dataset.state=="siap"){
+
+      this.innerHTML=""
+      this.dataset.state="kosong"
+
+      uang+=2
+      updateUang()
+
+    }
+
+  }
+
+  ladang.appendChild(petak)
+
+}
+
+/* tombol kirim */
+kirimBtn.onclick = function(){
+  alert("💰 Uang terkirim ke Pak Wowo! Terima kasih!")
+  uang = 0
+  updateUang()
+}
+
+/* start game */
+document.getElementById("playBtn").onclick=function(){
+  document.getElementById("startScreen").style.display="none"
+}
+
+updateUang()
+
+/* event gambar */
+let eventLayer=document.getElementById("eventImage")
+function showEvent(){
+  eventLayer.style.display="flex"
+  setTimeout(()=>{
+    eventLayer.style.display="none"
+  },1000)
+}
+setInterval(showEvent,11000)
+
+</script>
+
+</body>
+</html>
